@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -11,7 +13,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        Gate::authorize('viewAny', User::class);
+
+        return User::all();
     }
 
     /**
@@ -19,7 +23,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -27,7 +31,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Gate::authorize('create', User::class);
+
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::create($data);
+
+        return response()->json([
+            'user' => $user,
+            'message' => __('messages.created'),
+        ], 201);
     }
 
     /**
@@ -35,7 +52,9 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        Gate::authorize('view', User::find($id));
+
+        return User::find($id);
     }
 
     /**
@@ -43,7 +62,7 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+
     }
 
     /**
@@ -51,7 +70,21 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        Gate::authorize('update', User::find($id));
+
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::find($id);
+        $user->update($data);
+
+        return response()->json([
+            'user' => $user,
+            'message' => __('messages.updated'),
+        ]);
     }
 
     /**
@@ -59,6 +92,10 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Gate::authorize('delete', User::find($id));
+
+        return response()->json([
+            'message' => __('messages.deleted'),
+        ]);
     }
 }

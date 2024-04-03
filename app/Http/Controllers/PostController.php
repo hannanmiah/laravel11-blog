@@ -13,7 +13,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        // all posts
+        return Post::all();
     }
 
     /**
@@ -29,7 +30,13 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //
+        // create a post
+        $post = Post::create($request->validated());
+
+        return response()->json([
+            'post' => $post,
+            'message' => __('messages.created'),
+        ], 201);
     }
 
     /**
@@ -37,7 +44,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        // show the post
+        return $post;
     }
 
     /**
@@ -53,7 +61,13 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        // update the post
+        $post->update($request->validated());
+
+        return response()->json([
+            'post' => $post,
+            'message' => __('messages.updated'),
+        ]);
     }
 
     /**
@@ -61,6 +75,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        // delete the post
+        $post->delete();
+
+        return response()->json([
+            'message' => __('messages.deleted'),
+        ]);
     }
 }
